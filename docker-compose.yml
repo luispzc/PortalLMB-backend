@@ -1,0 +1,11 @@
+services:
+  pocketbase:
+    build: .
+    container_name: portal_lmb_pb_backend
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./pb_data:/pb/pb_data
+      - ./pb_migrations:/pb/pb_migrations
+      - ./pb_hooks:/pb/pb_hooks
+    restart: unless-stopped

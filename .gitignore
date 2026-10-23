@@ -1,0 +1,9 @@
+# Binario de PocketBase (se descarga con scripts/instalar-pocketbase.ps1)
+pocketbase
+pocketbase.exe
+*.zip
+
+# Base de datos y archivos subidos (locales de cada máquina)
+pb_data/
+
+.env
