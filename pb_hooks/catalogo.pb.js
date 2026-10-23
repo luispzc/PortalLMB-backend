@@ -1,7 +1,7 @@
 /// <reference path="../pb_data/types.d.ts" />
 
 // Catálogo del portal en una sola llamada: áreas activas con sus sistemas activos, ya ordenados.
-// Es lo que el frontend necesita para dibujar las rocas y el menú de cada área.
+// Es lo que el frontend necesita para dibujar las rocas y el menú de cada área. Es público.
 routerAdd("GET", "/api/portal/catalogo", (e) => {
     const areas = e.app.findRecordsByFilter("areas", "activo = true", "orden", 0, 0)
     const sistemas = e.app.findRecordsByFilter("sistemas", "activo = true", "orden", 0, 0)
@@ -25,4 +25,4 @@ routerAdd("GET", "/api/portal/catalogo", (e) => {
     }))
 
     return e.json(200, { areas: resultado })
-}, $apis.requireAuth())
+})

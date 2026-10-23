@@ -57,21 +57,23 @@ Para respaldos, descarga la base desde el panel (*Settings → Backups*) o progr
 
 | Colección | Para qué sirve |
 | --- | --- |
-| `users` | Usuarios del portal. Además de `name` y `avatar`, tienen `cargo` y `rol` (`admin` o `colaborador`). No hay registro público: solo un admin crea cuentas. |
-| `areas` | Las rocas del portal (Administrativos, De Control, Operativos). |
-| `sistemas` | Los módulos de cada área. El campo `url` es a dónde lleva "Acceder al sistema". |
-| `accesos` | Un registro cada vez que un usuario entra a un sistema. |
-| `accesos_por_sistema` | Vista (solo admins) con el total de accesos, usuarios distintos y último acceso por sistema. |
+| `users` | Cuentas de administración. Además de `name` y `avatar`, tienen `cargo` y `rol`: `admin` puede iniciar sesión; `colaborador` es una cuenta desactivada ("Sin acceso" en el panel). No hay registro público. |
+| `areas` | Las rocas del portal (Administrativos, De Control, Operativos). Lectura pública. |
+| `sistemas` | Los módulos de cada área. El campo `url` es a dónde lleva "Acceder al sistema". Lectura pública. |
+| `accesos` | Un registro cada vez que alguien entra a un sistema. Los visitantes quedan sin `usuario`; si hay un admin con sesión, queda a su nombre. |
+| `accesos_por_sistema` | Vista (solo admins) con el total de accesos, cuántos admins distintos entraron y el último acceso por sistema. |
 
 ### Permisos
 
-- **Colaborador**: ve el catálogo, registra sus propios accesos y edita su perfil (no su rol).
-- **Admin**: además crea y edita usuarios (incluido su correo, rol y contraseña), administra el catálogo y ve el reporte de uso. Esto lo hace desde el panel de administración del portal.
+El portal es **público**: cualquiera ve el catálogo y entra a los sistemas sin iniciar sesión.
+
+- **Visitante**: ve el catálogo y registra accesos anónimos. No puede leer el registro de accesos.
+- **Admin**: es el único que inicia sesión (el hook de `usuarios.pb.js` rechaza al resto con 403). Crea y edita cuentas (correo, cargo, rol y contraseña) desde el panel de administración del portal, administra el catálogo y ve el reporte de uso.
 - **Superusuario**: acceso total desde el panel `/_/`.
 
 ## Endpoints propios
 
-`GET /api/portal/catalogo` (requiere sesión): áreas activas con sus sistemas activos, ya ordenados.
+`GET /api/portal/catalogo` (público): áreas activas con sus sistemas activos, ya ordenados.
 
 ```json
 {
@@ -91,7 +93,7 @@ Para respaldos, descarga la base desde el panel (*Settings → Backups*) o progr
 
 ## Automatizaciones (`pb_hooks/`)
 
-- `usuarios.pb.js`: un usuario nuevo sin rol queda como `colaborador`.
+- `usuarios.pb.js`: un usuario nuevo sin rol queda como `colaborador` (sin acceso), y solo los `admin` pueden iniciar sesión o renovar su sesión. Quitarle el rol de admin a alguien le corta el acceso en su próxima renovación.
 - `catalogo.pb.js`: el endpoint `/api/portal/catalogo`.
 
 ## Uso desde el frontend
@@ -100,19 +102,18 @@ Para respaldos, descarga la base desde el panel (*Settings → Backups*) o progr
 import PocketBase from 'pocketbase'
 
 const pb = new PocketBase('http://127.0.0.1:8090')
-await pb.collection('users').authWithPassword(correo, clave)
 
+// Sin sesión: catálogo y registro de accesos de visitantes
 const { areas } = await pb.send('/api/portal/catalogo', {})
+await pb.collection('accesos').create({ sistema: sistemaId })
 
-// Al presionar "Acceder al sistema"
-await pb.collection('accesos').create({ usuario: pb.authStore.record.id, sistema: sistemaId })
-
-// Panel de administración (solo admins): crear un usuario y reiniciar su contraseña
+// Administración: iniciar sesión (solo admins) y gestionar cuentas
+await pb.collection('users').authWithPassword(correo, clave)
 const usuario = await pb.collection('users').create({
   email: 'nombre@lambol.cl',
   name: 'Nombre Apellido',
   cargo: 'Gestión Operativa',
-  rol: 'colaborador',
+  rol: 'admin',
   password: claveTemporal,
   passwordConfirm: claveTemporal,
   verified: true,
