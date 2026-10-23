@@ -1,0 +1,9 @@
+# La imagen solo necesita las migraciones, los hooks y el entrypoint
+.git
+.env
+pb_data
+state
+pocketbase
+pocketbase.exe
+*.zip
+scripts

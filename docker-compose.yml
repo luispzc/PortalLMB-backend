@@ -4,6 +4,9 @@ services:
     container_name: portal_lmb_pb_backend
     ports:
       - "8090:8080"
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - ./pb_data:/pb/pb_data
       - ./pb_migrations:/pb/pb_migrations

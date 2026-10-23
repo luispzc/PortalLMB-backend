@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.20
 
 ARG PB_VERSION=0.30.0
 
@@ -9,11 +9,15 @@ RUN wget https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSIO
     unzip /tmp/pb.zip -d /pb && \
     rm /tmp/pb.zip
 
+WORKDIR /pb
+
 # Las migraciones crean las colecciones y el catálogo inicial al arrancar
 COPY ./pb_migrations /pb/pb_migrations
 COPY ./pb_hooks /pb/pb_hooks
+COPY ./docker-entrypoint.sh /pb/docker-entrypoint.sh
+RUN chmod +x /pb/docker-entrypoint.sh
 
-# Puerto estándar que espera Railway
+# Railway entrega el puerto en $PORT; 8080 es el valor por defecto
 EXPOSE 8080
 
-CMD ["/pb/pocketbase", "serve", "--http=0.0.0.0:8080", "--dir=/pb/pb_data"]
+ENTRYPOINT ["/pb/docker-entrypoint.sh"]
