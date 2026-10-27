@@ -21,6 +21,10 @@ routerAdd("GET", "/api/portal/catalogo", (e) => {
                 descripcion: sistema.getString("descripcion"),
                 icono: sistema.getString("icono"),
                 url: sistema.getString("url"),
+                // Ruta de la miniatura de su foto, relativa al servidor; vacía si no tiene foto.
+                imagen: sistema.getString("imagen")
+                    ? `/api/files/${sistema.collection().id}/${sistema.id}/${sistema.getString("imagen")}?thumb=800x450`
+                    : "",
             })),
     }))
 
