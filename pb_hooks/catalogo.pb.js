@@ -26,3 +26,20 @@ routerAdd("GET", "/api/portal/catalogo", (e) => {
 
     return e.json(200, { areas: resultado })
 })
+
+// Desarrollos de la vitrina pública del portal. Es público.
+routerAdd("GET", "/api/portal/desarrollos", (e) => {
+    // Contenido demostrativo temporal, fuera de la base de datos hasta que se definan los
+    // campos y el flujo editorial. Va dentro del handler: PocketBase ejecuta cada handler en
+    // su propio contexto aislado, sin acceso a variables declaradas fuera de él.
+    const desarrollosDemo = [
+        { id: "sistema-comercial", titulo: "Sistema Comercial", categoria: "Gestión comercial", descripcion: "Seguimiento de facturas, gastos, reportes y operaciones comerciales.", imagen: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80", url: "https://example.com/desarrollos/sistema-comercial" },
+        { id: "mapa-operativo", titulo: "Mapa Operativo", categoria: "Operaciones", descripcion: "Planificación territorial, rutas y consulta de puntos de operación.", imagen: "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1200&q=80", url: "https://example.com/desarrollos/mapa-operativo" },
+        { id: "inventario-lmbl", titulo: "Inventario LMBL", categoria: "Activos", descripcion: "Control de asignación, devoluciones y disponibilidad de equipos.", imagen: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80", url: "https://example.com/desarrollos/inventario-lmbl" },
+        { id: "veta-ambiental", titulo: "VETA Ambiental", categoria: "Medio ambiente", descripcion: "Gestión de proyectos ambientales y control de compromisos.", imagen: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=80", url: "https://example.com/desarrollos/veta-ambiental" },
+        { id: "centro-documental", titulo: "Centro Documental", categoria: "Documentación", descripcion: "Acceso organizado a documentación corporativa y operacional.", imagen: "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?auto=format&fit=crop&w=1200&q=80", url: "https://example.com/desarrollos/centro-documental" },
+        { id: "tablero-gerencial", titulo: "Tablero Gerencial", categoria: "Analítica", descripcion: "Indicadores consolidados para apoyar decisiones de gestión.", imagen: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80", url: "https://example.com/desarrollos/tablero-gerencial" },
+    ]
+
+    return e.json(200, { desarrollos: desarrollosDemo })
+})
